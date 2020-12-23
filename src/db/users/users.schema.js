@@ -1,31 +1,37 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-let UserSchema = new Schema({
-    firstName: {
-        type: String
+let UserSchema = new Schema(
+    {
+        firstName: {
+            type: String
+        },
+        lastName: {
+            type: String
+        },
+        email: {
+            type: String
+        },
+        password: {
+            type: String
+        },
+        socketId: {
+            type: String
+        },
+        online: {
+            type: String
+        },
+        status: {
+            type: Number,
+            default: 1
+        }
     },
-    lastName: {
-        type: String
+    {
+        collection: 'users'
     },
-    email: {
-        type: String
-    },
-    password: {
-        type: String
-    },
-    socketId: {
-        type: String
-    },
-    online: {
-        type: String
-    },
-    status: {
-        type: Number,
-        default: 1
+    {
+        timestamps: true
     }
-}, {
-    collection: 'users'
-});
+);
 
 module.exports = mongoose.model('Users', UserSchema);

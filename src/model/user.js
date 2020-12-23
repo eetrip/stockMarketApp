@@ -15,6 +15,7 @@ export default class UserModel {
 
                 userData.save()
                 .then( user => {
+                    // this.MongoDBConnect = new DbClose();
                     resolve( user );
                     return user;
                 })
@@ -53,6 +54,7 @@ export default class UserModel {
             try {
 
                 this.MongoDB = new Db();
+
                 this.userModel.findAndModify({
                     _id: userId
                 },

@@ -4,6 +4,9 @@ import {
     signUp as signUpRoute,
     login as loginRoute
 } from "../controllers/user";
+import {
+    createCompany as createCompanyRoute
+} from "../controllers/company";
 
 export default class Routes{
 
@@ -15,10 +18,12 @@ export default class Routes{
     appRoutes() {
         // this.app.post('/usernameAvailable', routeHandler.userNameCheckHandler);
 
-		this.app.post( '/register', signUpRoute );
-
+        //userRoutes
+		this.app.post( '/signUp', signUpRoute );
 		this.app.post('/login', loginRoute );
 
+        // generalRoutes
+        this.app.post( '/registerCompany', createCompanyRoute );
 		// this.app.post('/userSessionCheck', routeHandler.userSessionCheckRouteHandler);
 
 		// this.app.post('/getMessages', routeHandler.getMessagesRouteHandler);
