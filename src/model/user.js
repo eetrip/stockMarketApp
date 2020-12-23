@@ -1,4 +1,5 @@
 import Db from "../config/db";
+import DbClose from "../config/dbClose";
 const userModel = require('../db/users/users.schema');
 
 export default class UserModel {
@@ -27,33 +28,43 @@ export default class UserModel {
         });
     };
 
+
     getUserByEmail( email ) {
         return new Promise( async( resolve, reject ) => {
             try {
-                await this.MongoDB.onConnect();
-                this.userModel.find({
+
+                this.MongoDB = new Db();
+                let user = await userModel.findOne({
                     email: email
-                }).toArray( ( error, result ) => {
-                    this.MongoDB.closeConnection();
-                    if( error ) {
-                        reject( error );
-                    };
-                    resolve( result );
-                });
+                }).exec();
+
+                resolve( user );
+                return user;
+
             } catch( error ) {
                 reject( error );
             };
         });
     };
 
+
     userOnline( userId ) {
         return new Promise( async( resolve, reject ) => {
             try {
-                await this.MongoDB.onConnect();
+
+                this.MongoDB = new Db();
                 this.userModel.findAndModify({
                     _id: userId
-                }, [], { "$set": {'online': 'Y'}}, { new: true, upsert: true}, ( err, result ) => {
-                    this.MongoDB.closeConnection();
+                },
+                [],
+                {
+                    "$set": {'online': 'Y'}
+                },
+                {
+                    new: true,
+                    upsert: true
+                },
+                ( err, result ) => {
                     if( err ) {
                         reject( err );
                     };

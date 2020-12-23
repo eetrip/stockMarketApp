@@ -55,7 +55,7 @@ export const signUp = route( async( req, res ) => {
 export const login = route( async( req, res ) => {
 
     const data = {
-        email: ( req.body.email ).toLowerCase(),
+        email: req.body.email,
         password: req.body.password
     };
     if( data.email === '' || data.email === null ) {

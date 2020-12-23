@@ -14,6 +14,12 @@ let UserSchema = new Schema({
     password: {
         type: String
     },
+    socketId: {
+        type: String
+    },
+    online: {
+        type: String
+    },
     status: {
         type: Number,
         default: 1
