@@ -9,10 +9,18 @@ class PasswordHash{
 
 	createHash(password) {
 		return bcrypt.hashSync(password, 10);
-	}
+	};
 
 	compareHash(password, hash) {
-		return bcrypt.compareSync(password, hash)
+		return new Promise((resolve, reject) => {
+		  bcrypt.compare(password, hash, (err, match) => {
+			if (err) {
+			  reject(err);
+			  return;
+			}
+			resolve(match);
+		  });
+		});
 	}
 }
 

@@ -39,29 +39,32 @@ class RouteHandler{
 
 	async loginRouteHandler(request, response){
 		const data = {
-			username : (request.body.username).toLowerCase(),
+			email : request.body.email,
 			password : request.body.password
 		};
-		if(data.username === '' || data.username === null) {
-			response.status(CONSTANTS.SERVER_ERROR_HTTP_CODE).json({
-				error : true,
-				message : CONSTANTS.USERNAME_NOT_FOUND
-			});
-		}else if(data.password === '' || data.password === null) {
-			response.status(CONSTANTS.SERVER_ERROR_HTTP_CODE).json({
-				error : true,
-				message : CONSTANTS.PASSWORD_NOT_FOUND
-			});
-		} else {
+		// if(data.username === '' || data.username === null) {
+		// 	response.status(CONSTANTS.SERVER_ERROR_HTTP_CODE).json({
+		// 		error : true,
+		// 		message : CONSTANTS.USERNAME_NOT_FOUND
+		// 	});
+		// }else if(data.password === '' || data.password === null) {
+		// 	response.status(CONSTANTS.SERVER_ERROR_HTTP_CODE).json({
+		// 		error : true,
+		// 		message : CONSTANTS.PASSWORD_NOT_FOUND
+		// 	});
+		// } else {
 			try {
-				const result = await queryHandler.getUserByUsername(data.username);
-				if(result ===  null || result === undefined) {
+				const result = await queryHandler.getUserByEmail(data.email);
+				if( result ===  null || result === undefined ) {
 					response.status(CONSTANTS.SERVER_NOT_FOUND_HTTP_CODE).json({
 						error : true,
 						message : CONSTANTS.USER_LOGIN_FAILED
 					});
 				} else {
 					if( passwordHash.compareHash(data.password, result.password)) {
+						console.log(`
+						${JSON.stringify(result)}
+						`)
 						await queryHandler.makeUserOnline(result._id);
 						response.status(CONSTANTS.SERVER_OK_HTTP_CODE).json({
 							error : false,
@@ -81,29 +84,31 @@ class RouteHandler{
 					message : CONSTANTS.USER_LOGIN_FAILED
 				});
 			}
-		}
+		// }
 	}
 
 	async registerRouteHandler(request, response) {
 		const data = {
-			username : (request.body.username).toLowerCase(),
+			firstName : request.body.firstName,
+			lastName : request.body.lastName,
+			email : request.body.email,
 			password : request.body.password
 		};
-		if(data.username === '') {
-			response.status(CONSTANTS.SERVER_ERROR_HTTP_CODE).json({
-				error : true,
-				message : CONSTANTS.USERNAME_NOT_FOUND
-			});
-		}else if(data.password === '') {
-			response.status(CONSTANTS.SERVER_ERROR_HTTP_CODE).json({
-				error : true,
-				message : CONSTANTS.PASSWORD_NOT_FOUND
-			});
-		} else {
+		// if(data.username === '') {
+		// 	response.status(CONSTANTS.SERVER_ERROR_HTTP_CODE).json({
+		// 		error : true,
+		// 		message : CONSTANTS.USERNAME_NOT_FOUND
+		// 	});
+		// }else if(data.password === '') {
+		// 	response.status(CONSTANTS.SERVER_ERROR_HTTP_CODE).json({
+		// 		error : true,
+		// 		message : CONSTANTS.PASSWORD_NOT_FOUND
+		// 	});
+		// } else {
 			try {
 				data.online = 'Y' ;
 				data.socketId = '' ;
-        data.password = passwordHash.createHash(data.password);
+				data.password = passwordHash.createHash(data.password);
 				const result = await queryHandler.registerUser(data);
 				if (result === null || result === undefined) {
 					response.status(CONSTANTS.SERVER_OK_HTTP_CODE).json({
@@ -123,7 +128,7 @@ class RouteHandler{
 					message : CONSTANTS.SERVER_ERROR_MESSAGE
 				});
 			}
-		}
+		// }
 	}
 
 	async userSessionCheckRouteHandler(request, response){
@@ -175,16 +180,28 @@ class RouteHandler{
 				});
 			}
 		}
-  };
+	};
 
-  async test( req, res ) {
-    const data = {
-      someName: req.body.somename,
-      someThing: req.body.something
-    };
-    const result = await queryHandler.test( data );
-    res.status(200).json( result );
-  }
+	async createCompany( req, res ) {
+		try {
+			const data = req.body;
+			const result = await queryHandler.createCompany( data );
+			res.status(200).json( result );
+		} catch ( error ) {
+			console.log( error );
+		};
+	};
+
+
+	async listCompanies( req, res ) {
+		try {
+			const result = await queryHandler.listCompanies();
+			if( result ) res.status( 200 ).json( result );
+		} catch( error ) {
+			console.log( error );
+		};
+	};
+
 
 	routeNotFoundHandler(request, response){
 		res.status(CONSTANTS.SERVER_NOT_FOUND_HTTP_CODE).json({

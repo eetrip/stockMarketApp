@@ -6,100 +6,106 @@
 'use strict';
 
 let companyModel = require('../db/company/company.schema');
+const userModel = require('../db/users/user.schema');
 class QueryHandler{
 
 	constructor(){
 		this.Mongodb = require("./../config/db");
 	}
 
-	userNameCheck(data){
-		return new Promise( async (resolve, reject) => {
-			try {
-				const [DB, ObjectID] = await this.Mongodb.onConnect();
-				DB.collection('users').find(data).count( (error, result) => {
-					DB.close();
-					if( error ){
-						reject(error);
-					}
-					resolve(result);
-				});
-			} catch (error) {
-				reject(error)
-			}
-		});
-	}
+	// userNameCheck(data){
+	// 	return new Promise( async (resolve, reject) => {
+	// 		try {
+	// 			const [DB, ObjectID] = await this.Mongodb.onConnect();
+	// 			DB.collection('users').find(data).count( (error, result) => {
+	// 				DB.close();
+	// 				if( error ){
+	// 					reject(error);
+	// 				}
+	// 				resolve(result);
+	// 			});
+	// 		} catch (error) {
+	// 			reject(error)
+	// 		}
+	// 	});
+	// }
 
-	getUserByUsername(username){
-		return new Promise( async (resolve, reject) => {
-			try {
-				const [DB, ObjectID] = await this.Mongodb.onConnect();
-				DB.collection('users').find({
-					username :  username
-				}).toArray( (error, result) => {
-					DB.close();
-					if( error ){
-						reject(error);
-					}
-					resolve(result[0]);
-				});
-			} catch (error) {
-				reject(error)
-			}
-		});
-	}
+	async getUserByEmail(email){
+		try {
 
-	makeUserOnline(userId){
-		return new Promise( async (resolve, reject) => {
-			try {
-				const [DB, ObjectID] = await this.Mongodb.onConnect();
-				DB.collection('users').findAndModify({
-					_id : ObjectID(userId)
-				},[],{ "$set": {'online': 'Y'} },{new: true, upsert: true}, (err, result) => {
-					DB.close();
-					if( err ){
-						reject(err);
+			await this.Mongodb.onConnect();
+			let data = await userModel.find(
+				{ email: email },
+				( error, document ) => {
+					if( error ) {
+						return;
 					}
-					resolve(result.value);
-				});
-			} catch (error) {
-				reject(error)
+				}
+			);
+			if( data ) {
+				return data[0];
 			}
-		});
+		} catch ( error ){
+			console.log(error);
+		};
+	};
+
+	async makeUserOnline(userId){
+		try {
+			await this.Mongodb.onConnect();
+			let data = await userModel.findOneAndUpdate(
+				{ _id: userId },
+				[],
+				{ "$set": { 'online': 'Y'} },
+				{ new: true, upsert: true },
+				( error, result ) => {
+					if( error ) {
+						return error;
+					};
+				}
+			);
+			return data;
+		} catch( error ) {
+			console.log(error);
+		}
 	}
 
 	registerUser(data){
 		return new Promise( async (resolve, reject) => {
 			try {
-				const [DB, ObjectID] = await this.Mongodb.onConnect();
-				DB.collection('users').insertOne(data, (err, result) =>{
-					DB.close();
-					if( err ){
-						reject(err);
-					}
-					resolve(result);
-				});
-			} catch (error) {
-				reject(error)
-			}
-		});
-	}
+				await this.Mongodb.onConnect();
+				let userData = new userModel( data );
 
-	userSessionCheck(data){
-		return new Promise( async (resolve, reject) => {
-			try {
-				const [DB, ObjectID] = await this.Mongodb.onConnect();
-				DB.collection('users').findOne( { _id : ObjectID(data.userId) , online : 'Y'}, (err, result) => {
-					DB.close();
-					if( err ){
-						reject(err);
-					}
-					resolve(result);
+				userData.save()
+				.then( user => {
+					resolve( user );
+					return user;
+				}).catch( err => {
+					reject( err );
 				});
+
 			} catch (error) {
 				reject(error)
 			}
 		});
-	}
+	};
+
+	// userSessionCheck(data){
+	// 	return new Promise( async (resolve, reject) => {
+	// 		try {
+	// 			const [DB, ObjectID] = await this.Mongodb.onConnect();
+	// 			DB.collection('users').findOne( { _id : ObjectID(data.userId) , online : 'Y'}, (err, result) => {
+	// 				DB.close();
+	// 				if( err ){
+	// 					reject(err);
+	// 				}
+	// 				resolve(result);
+	// 			});
+	// 		} catch (error) {
+	// 			reject(error)
+	// 		}
+	// 	});
+	// }
 
 	getUserInfo({userId,socketId = false}){
 		let queryProjection = null;
@@ -162,7 +168,38 @@ class QueryHandler{
 				reject(error)
 			}
 		});
-	}
+	};
+
+	async createCompany( data ) {
+		return new Promise( async( resolve, reject ) => {
+			try {
+
+				await this.Mongodb.onConnect();
+				let companyData = new companyModel( data );
+
+				companyData.save().then( company => {
+					// DB.close();
+					resolve( company );
+					return ( company );
+				});
+
+			} catch( error ) {
+				reject( error );
+		  	};
+		});
+	};
+
+
+	async listCompanies() {
+		try {
+			await this.Mongodb.onConnect();
+			let data = await companyModel.find();
+			if( data ) return data;
+		} catch( error ) {
+			console.log( error );
+		};
+	};
+
 
 	getChatList(userId){
 		return new Promise( async (resolve, reject) => {
@@ -278,7 +315,7 @@ class QueryHandler{
   test( data ) {
     return new Promise( async( resolve, reject ) => {
       try {
-        const [DB, ObjectID] = await this.Mongodb.onConnect();
+        await this.Mongodb.onConnect();
         let companyData = new companyModel( data );
 
         companyData.save()
@@ -291,7 +328,7 @@ class QueryHandler{
         reject( error );
       };
     });
-  }
-}
+  };
+};
 
 module.exports = new QueryHandler();

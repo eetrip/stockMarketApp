@@ -4,11 +4,18 @@ const Schema = mongoose.Schema;
 
 let CompanySchema = new Schema(
     {
-        someName: {
+        companyName: {
             type: String
         },
-        someThing: {
-            type: String
+        highestPrice: {
+            type: Number
+        },
+        currentPrice: {
+            type: Number
+        },
+        status: {
+            type: Number,
+            default: 1
         }
     },
     {
