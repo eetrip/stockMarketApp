@@ -1,8 +1,3 @@
-/*
-* Real time private chatting app using Angular 2, Nodejs, mongodb and Socket.io
-* @author Shashank Tiwari
-*/
-
 'use strict';
 
 let companyModel = require('../db/company/company.schema');
@@ -13,29 +8,33 @@ class QueryHandler{
 		this.Mongodb = require("./../config/db");
 	}
 
-	// userNameCheck(data){
-	// 	return new Promise( async (resolve, reject) => {
-	// 		try {
-	// 			const [DB, ObjectID] = await this.Mongodb.onConnect();
-	// 			DB.collection('users').find(data).count( (error, result) => {
-	// 				DB.close();
-	// 				if( error ){
-	// 					reject(error);
-	// 				}
-	// 				resolve(result);
-	// 			});
-	// 		} catch (error) {
-	// 			reject(error)
-	// 		}
-	// 	});
-	// }
-
-	async getUserByEmail(email){
+	async userNameCheck( username ){
 		try {
-
+			JSON.stringify(username);
 			await this.Mongodb.onConnect();
 			let data = await userModel.find(
-				{ email: email },
+				{ username: username },
+				( error, document ) => {
+					if( error ) {
+						return;
+					}
+				}
+			);
+			if( data && data.length > 0 ) {
+				return data;
+			} else {
+				return null;
+			}
+		} catch (error) {
+			reject(error)
+		}
+	}
+
+	async getUserByName(username){
+		try {
+			await this.Mongodb.onConnect();
+			let data = await userModel.find(
+				{ username: username },
 				( error, document ) => {
 					if( error ) {
 						return;
@@ -44,7 +43,7 @@ class QueryHandler{
 			);
 			if( data ) {
 				return data[0];
-			}
+			};
 		} catch ( error ){
 			console.log(error);
 		};
@@ -90,22 +89,22 @@ class QueryHandler{
 		});
 	};
 
-	// userSessionCheck(data){
-	// 	return new Promise( async (resolve, reject) => {
-	// 		try {
-	// 			const [DB, ObjectID] = await this.Mongodb.onConnect();
-	// 			DB.collection('users').findOne( { _id : ObjectID(data.userId) , online : 'Y'}, (err, result) => {
-	// 				DB.close();
-	// 				if( err ){
-	// 					reject(err);
-	// 				}
-	// 				resolve(result);
-	// 			});
-	// 		} catch (error) {
-	// 			reject(error)
-	// 		}
-	// 	});
-	// }
+	async userSessionCheck(data){
+		try {
+			await this.Mongodb.onConnect();
+			let sessionData = await userModel.find(
+				{ _id: data.userId, online: 'Y' },
+				( error, document ) => {
+					if( error ) {
+						return;
+					};
+				}
+			);
+			if( sessionData ) return sessionData;
+		} catch( error ) {
+			console.log(error)
+		};
+	};
 
 	getUserInfo({userId,socketId = false}){
 		let queryProjection = null;
@@ -156,9 +155,9 @@ class QueryHandler{
 		};
 		return new Promise( async (resolve, reject) => {
 			try {
-				const [DB, ObjectID] = await this.Mongodb.onConnect();
-				DB.collection('users').update( { _id : ObjectID(data.id)}, data.value ,(err, result) => {
-					DB.close();
+				await this.Mongodb.onConnect();
+				userModel.findByIdAndUpdate( { _id : data.id }, data.value ,(err, result) => {
+					// DB.close();
 					if( err ){
 						reject(err);
 					}
@@ -170,10 +169,10 @@ class QueryHandler{
 		});
 	};
 
+
 	async createCompany( data ) {
 		return new Promise( async( resolve, reject ) => {
 			try {
-
 				await this.Mongodb.onConnect();
 				let companyData = new companyModel( data );
 
@@ -228,7 +227,8 @@ class QueryHandler{
 				reject(error)
 			}
 		});
-	}
+	};
+
 
 	insertMessages(messagePacket){
 		return new Promise( async (resolve, reject) => {
@@ -245,7 +245,8 @@ class QueryHandler{
 				reject(error)
 			}
 		});
-	}
+	};
+
 
 	getMessages({userId, toUserId}){
 		const data = {

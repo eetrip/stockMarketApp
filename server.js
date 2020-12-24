@@ -10,7 +10,8 @@ const http = require('http');
 const socketio = require('socket.io');
 
 const socketEvents = require('./web/socket'); 
-const routes = require('./web/routes'); 
+const routes = require('./web/routes');
+const cron = require('./utils/cron');
 const appConfig = require('./config/app-config'); 
 
 
@@ -31,11 +32,16 @@ class Server{
         new routes(this.app).routesConfig();
         new socketEvents(this.socket).socketConfig();
     }
-    /* Including app Routes ends*/  
+    /* Including app Routes ends*/
+
+    includeCron() {
+        new cron();
+    };
 
     appExecute(){
         this.appConfig();
         this.includeRoutes();
+        this.includeCron();
 
         const port =  process.env.PORT || 4000;
         const host = process.env.HOST || `localhost`;      

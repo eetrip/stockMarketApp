@@ -10,9 +10,9 @@ class Routes{
 
 	/* creating app Routes starts */
 	appRoutes(){
-		// this.app.post('/usernameAvailable', routeHandler.userNameCheckHandler);
+		this.app.post('/usernameAvailable', routeHandler.userNameCheckHandler);
 		
-		this.app.post( '/signUp', routeHandler.registerRouteHandler );
+		this.app.post( '/register', routeHandler.registerRouteHandler );
 		
 		this.app.post( '/registerCompany', routeHandler.createCompany );
 

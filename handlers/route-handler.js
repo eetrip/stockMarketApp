@@ -6,7 +6,7 @@ const passwordHash = require('./../utils/password-hash');
 class RouteHandler{
 
 	async userNameCheckHandler(request, response){
-		const username = request.body.username;
+		const username = (request.body.username).toLowerCase();
 		if (username === "") {
 			response.status(CONSTANTS.SERVER_ERROR_HTTP_CODE).json({
 				error : true,
@@ -14,10 +14,8 @@ class RouteHandler{
 			});
 		} else {
 			try {
-				const count = await queryHandler.userNameCheck( {
-					username : username.toLowerCase()
-				});
-				if (count > 0) {
+				const count = await queryHandler.userNameCheck( username );
+				if (count && count.length > 0) {
 					response.status(200).json({
 						error : true,
 						message : CONSTANTS.USERNAME_AVAILABLE_FAILED
@@ -39,22 +37,22 @@ class RouteHandler{
 
 	async loginRouteHandler(request, response){
 		const data = {
-			email : request.body.email,
+			username : (request.body.username).toLowerCase(),
 			password : request.body.password
 		};
-		// if(data.username === '' || data.username === null) {
-		// 	response.status(CONSTANTS.SERVER_ERROR_HTTP_CODE).json({
-		// 		error : true,
-		// 		message : CONSTANTS.USERNAME_NOT_FOUND
-		// 	});
-		// }else if(data.password === '' || data.password === null) {
-		// 	response.status(CONSTANTS.SERVER_ERROR_HTTP_CODE).json({
-		// 		error : true,
-		// 		message : CONSTANTS.PASSWORD_NOT_FOUND
-		// 	});
-		// } else {
+		if(data.username === '' || data.username === null) {
+			response.status(CONSTANTS.SERVER_ERROR_HTTP_CODE).json({
+				error : true,
+				message : CONSTANTS.USERNAME_NOT_FOUND
+			});
+		}else if(data.password === '' || data.password === null) {
+			response.status(CONSTANTS.SERVER_ERROR_HTTP_CODE).json({
+				error : true,
+				message : CONSTANTS.PASSWORD_NOT_FOUND
+			});
+		} else {
 			try {
-				const result = await queryHandler.getUserByEmail(data.email);
+				const result = await queryHandler.getUserByName(data.username);
 				if( result ===  null || result === undefined ) {
 					response.status(CONSTANTS.SERVER_NOT_FOUND_HTTP_CODE).json({
 						error : true,
@@ -84,27 +82,28 @@ class RouteHandler{
 					message : CONSTANTS.USER_LOGIN_FAILED
 				});
 			}
-		// }
+		}
 	}
 
 	async registerRouteHandler(request, response) {
 		const data = {
+			username: request.body.username,
 			firstName : request.body.firstName,
 			lastName : request.body.lastName,
 			email : request.body.email,
 			password : request.body.password
 		};
-		// if(data.username === '') {
-		// 	response.status(CONSTANTS.SERVER_ERROR_HTTP_CODE).json({
-		// 		error : true,
-		// 		message : CONSTANTS.USERNAME_NOT_FOUND
-		// 	});
-		// }else if(data.password === '') {
-		// 	response.status(CONSTANTS.SERVER_ERROR_HTTP_CODE).json({
-		// 		error : true,
-		// 		message : CONSTANTS.PASSWORD_NOT_FOUND
-		// 	});
-		// } else {
+		if(data.username === '') {
+			response.status(CONSTANTS.SERVER_ERROR_HTTP_CODE).json({
+				error : true,
+				message : CONSTANTS.USERNAME_NOT_FOUND
+			});
+		}else if(data.password === '') {
+			response.status(CONSTANTS.SERVER_ERROR_HTTP_CODE).json({
+				error : true,
+				message : CONSTANTS.PASSWORD_NOT_FOUND
+			});
+		} else {
 			try {
 				data.online = 'Y' ;
 				data.socketId = '' ;
@@ -128,7 +127,7 @@ class RouteHandler{
 					message : CONSTANTS.SERVER_ERROR_MESSAGE
 				});
 			}
-		// }
+		}
 	}
 
 	async userSessionCheckRouteHandler(request, response){
