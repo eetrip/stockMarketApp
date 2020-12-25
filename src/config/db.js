@@ -1,43 +1,35 @@
-import mongoose from 'mongoose';
+"use strict";
+/*requiring mongodb node modules */
+const mongodb = require('mongodb');
+const mongoose = require('mongoose');
+const assert = require('assert');
 
 mongoose.Promise = global.Promise;
+
 mongoose.set("useNewUrlParser", true);
 mongoose.set("useFindAndModify", false);
 mongoose.set("useCreateIndex", true);
 mongoose.set("useUnifiedTopology", true);
 
-export default class Db {
+class Db{
 
-	constructor() {
-        this.onConnect();
-    };
+	constructor(){
+		this.mongoClient = mongodb.MongoClient;
+		this.ObjectID = mongodb.ObjectID;
+	}
 
-	onConnect() {
+	onConnect(){
 		const mongoURL = process.env.DB_URL;
-		return new Promise( ( resolve, reject ) => {
-            mongoose.connect( mongoURL, {
-                useNewUrlParser: true
-            }).then(
-                () => {
-                    console.log(`
-                    Database is connected
-                    `);
-                },
-                err => {
-                    console.log(`
-                    There was a problem while connecting to database
-                    ` + err 
-                    );
-                }
-            );
+		return new Promise( (resolve, reject) => {
+			mongoose.connect(mongoURL, { useNewUrlParser: true }, (err, db) => {
+				if (err) {
+					reject(err);
+				} else {
+					assert.strictEqual(null, err);
+					resolve([db,this.ObjectID]);
+				}
+			});
 		});
-    };
-
-    closeConnection() {
-        mongoose.connection.close(function () {
-            console.log('Connection has been successfully closed, see you again soon!');
-            process.exit(0);
-        });
-    }
-};
-// module.exports = new Db();
+	}
+}
+module.exports = new Db();

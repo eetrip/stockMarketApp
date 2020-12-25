@@ -1,8 +1,12 @@
-import mongoose from 'mongoose';
+// import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 let UserSchema = new Schema(
     {
+        username: {
+            type: String
+        },
         firstName: {
             type: String
         },

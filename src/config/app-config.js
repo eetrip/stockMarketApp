@@ -1,22 +1,24 @@
-import expressConfig from "./express-config";
-import bodyParser from "body-parser";
-import cors from "cors";
+const expressConfig = require('./express-config');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 const dotenv = require('dotenv');
 
-export default class AppConfig{
+class AppConfig{
+	
+	constructor(app){
+		dotenv.config();
+		this.app = app;
+	}
 
-    constructor( app ) {
-        dotenv.config();
-        this.app = app;
-    };
-
-    includeConfig() {
-        this.app.use(
+	includeConfig() {
+		this.app.use(
             bodyParser.json()
         );
         this.app.use(
-            cors()
-        );
-        new expressConfig( this.app );
-    };
-};
+        	cors()
+        );        
+		new expressConfig(this.app);
+	}
+
+}
+module.exports = AppConfig;

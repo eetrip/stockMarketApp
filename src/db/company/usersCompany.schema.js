@@ -2,16 +2,13 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-let CompanySchema = new Schema(
+let UserCompanySchema = new Schema(
     {
-        companyName: {
+        companyId: {
             type: String
         },
-        highestPrice: {
-            type: Number
-        },
-        currentPrice: {
-            type: Number
+        userId: {
+            type: String
         },
         status: {
             type: Number,
@@ -19,11 +16,11 @@ let CompanySchema = new Schema(
         }
     },
     {
-        collection: 'companies'
+        collection: 'userCompanies'
     },
     {
         timestamps: true
     }
 );
 
-module.exports = mongoose.model('Companies', CompanySchema );
+module.exports = mongoose.model('UserCompanies', UserCompanySchema );

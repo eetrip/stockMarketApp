@@ -1,46 +1,54 @@
-"use strict";
-// Imported required packages
-import express from 'express';
-import http from 'http';
-import Routes from "./routes/routes";
-import appConfig from "./config/app-config";
-const path = require('path'),
-    socketio = require('socket.io'),
-    bodyParser = require('body-parser'),
-    cors = require('cors'),
-mongoose = require('mongoose');
+'use strict';
 
-class Server {
+const express = require("express");
+const http = require('http');
+const socketio = require('socket.io');
 
-    constructor() {
+const socketEvents = require('./routes/socket'); 
+const routes = require('./routes/routes');
+const cron = require('./utils/cron');
+const appConfig = require('./config/app-config'); 
+
+
+class Server{
+
+    constructor(){
         this.app = express();
         this.http = http.Server(this.app);
-        // this.socket = socketio(this.http);
-    };
+        this.socket = socketio(this.http);
+    }
 
-    appConfig() {
+    appConfig(){        
         new appConfig(this.app).includeConfig();
-    };
+    }
 
-    includeRoutes() {
-        new Routes(this.app).routesConfig();
+    /* Including app Routes starts*/
+    includeRoutes(){
+        new routes(this.app).routesConfig();
         new socketEvents(this.socket).socketConfig();
+    }
+    /* Including app Routes ends*/
+
+    includeCron() {
+        new cron();
     };
 
-    appExecute() {
+    appExecute(){
         this.appConfig();
         this.includeRoutes();
+        this.includeCron();
 
-        const port = process.env.PORT || 4000;
-        const host = process.env.HOST || `localhost`;
+        const port =  process.env.PORT || 4000;
+        const host = process.env.HOST || `localhost`;      
 
-        this.http.listen( port, host, () => {
+        this.http.listen(port, host, () => {
             console.log(`
-            Listening on ${host}:${port}
+                Listening on http://${host}:${port}
             `);
         });
-    };
-};
+    }
 
+}
+    
 const app = new Server();
 app.appExecute();

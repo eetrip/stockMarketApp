@@ -1,37 +1,38 @@
-// const routeHandler = require('./../handlers/route-handler');
-// import user from "../../controllers/routes-handler";
-import {
-    signUp as signUpRoute,
-    login as loginRoute
-} from "../controllers/user";
-import {
-    createCompany as createCompanyRoute
-} from "../controllers/company";
+'use strict';
 
-export default class Routes{
+const baseController = require('../controller/baseController');
+import {
+    verifyBearerToken,
+    decodeBearerToken
+} from "../middleware/authentication";
 
-    constructor(app){
+class Routes{
+
+	constructor(app){
 		this.app = app;
 	}
 
-    /* creating app Routes starts */
-    appRoutes() {
-        // this.app.post('/usernameAvailable', routeHandler.userNameCheckHandler);
+	/* creating app Routes starts */
+	appRoutes(){
 
-        //userRoutes
-		this.app.post( '/signUp', signUpRoute );
-		this.app.post('/login', loginRoute );
+		//user routes
+		this.app.post('/usernameAvailable', baseController.userNameCheckHandler);
+		this.app.post( '/register', baseController.registerRouteHandler );
+		this.app.post( '/login', baseController.loginRouteHandler);
+		this.app.post('/userSessionCheck', decodeBearerToken, baseController.userSessionCheckRouteHandler);
 
-        // generalRoutes
-        this.app.post( '/registerCompany', createCompanyRoute );
-		// this.app.post('/userSessionCheck', routeHandler.userSessionCheckRouteHandler);
+		//company data routes
+		this.app.post( '/registerCompany', baseController.createCompany );
+		this.app.get( '/listCompanies', decodeBearerToken, baseController.listCompanies );
+		this.app.post( '/buyCompany', decodeBearerToken, baseController.buyCompany );
 
-		// this.app.post('/getMessages', routeHandler.getMessagesRouteHandler);
+		//miscellaneous routes
+		this.app.post('/getMessages', decodeBearerToken, baseController.getMessagesRouteHandler);
+		this.app.get('*', baseController.routeNotFoundHandler);
+	}
 
-		// this.app.get('*', routeHandler.routeNotFoundHandler);		
-    };
-
-    routesConfig() {
-        this.appRoutes();
-	};
-};
+	routesConfig(){
+		this.appRoutes();
+	}
+}
+module.exports = Routes;
