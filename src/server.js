@@ -24,7 +24,7 @@ class Server {
 
     includeRoutes() {
         new Routes(this.app).routesConfig();
-        // new socketEvents(this.socket).socketConfig();
+        new socketEvents(this.socket).socketConfig();
     };
 
     appExecute() {

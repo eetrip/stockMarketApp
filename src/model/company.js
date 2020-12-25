@@ -29,4 +29,13 @@ export default class CompanyModel {
             };
         });
     };
+
+    list() {
+        return new Promise( async( resolve, reject ) => {
+            try {
+                let MongoDB = new Db();
+                companyModel
+            }
+        })
+    }
 };
