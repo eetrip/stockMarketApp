@@ -1,7 +1,12 @@
 'use strict';
 
-let companyModel = require('../db/company/company.schema');
+const { reject } = require('lodash');
+const companyModel = require('../db/company/company.schema');
+const userCompanyModel = require('../db/company/usersCompany.schema');
 const userModel = require('../db/users/user.schema');
+const { ApplicationError } = require('../utils/error');
+const CONSTANTS = require("../config/constants");
+
 class QueryHandler{
 
 	constructor(){
@@ -197,6 +202,25 @@ class QueryHandler{
 		} catch( error ) {
 			console.log( error );
 		};
+	};
+
+
+	async buyCompany( data ) {
+		return new Promise( async( resolve, reject ) => {
+			try {
+				await this.Mongodb.onConnect();
+				let companyData = new userCompanyModel( data );
+
+				companyData.save().then( company => {
+					resolve( company );
+					return( company );
+				}).catch( err => {
+					reject( err );
+				});
+			} catch( error ) {
+				throw new ApplicationError( error, CONSTANTS.SERVER_ERROR_HTTP_CODE );
+			};
+		});
 	};
 
 

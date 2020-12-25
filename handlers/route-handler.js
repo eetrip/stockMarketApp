@@ -1,3 +1,5 @@
+import { ApplicationError } from "../utils/error";
+import { generateToken, decodeToken } from "../utils/token";
 const queryHandler = require('./../handlers/query-handler');
 const CONSTANTS = require('./../config/constants');
 const passwordHash = require('./../utils/password-hash');
@@ -60,13 +62,13 @@ class RouteHandler{
 					});
 				} else {
 					if( passwordHash.compareHash(data.password, result.password)) {
-						console.log(`
-						${JSON.stringify(result)}
-						`)
+						const token = await generateToken(result._id);
+						result.token = token;
 						await queryHandler.makeUserOnline(result._id);
 						response.status(CONSTANTS.SERVER_OK_HTTP_CODE).json({
 							error : false,
 							userId : result._id,
+							token: result.token,
 							message : CONSTANTS.USER_LOGIN_OK
 						});
 					} else {
@@ -115,9 +117,12 @@ class RouteHandler{
 						message : CONSTANTS.USER_REGISTRATION_FAILED
 					});
 				} else {
+					const token = await generateToken(result.insertedId);
+					result.token = token;
 					response.status(CONSTANTS.SERVER_OK_HTTP_CODE).json({
 						error : false,
 						userId : result.insertedId,
+						token: result.token,
 						message : CONSTANTS.USER_REGISTRATION_OK
 					});
 				}
@@ -194,10 +199,22 @@ class RouteHandler{
 
 	async listCompanies( req, res ) {
 		try {
+			let userId = res.locals.authData.id;
 			const result = await queryHandler.listCompanies();
 			if( result ) res.status( 200 ).json( result );
 		} catch( error ) {
 			console.log( error );
+		};
+	};
+
+	async buyCompany( req, res ) {
+		try {
+			const data = req.body;
+			data.userId = res.locals.authData.id;
+			const result = await queryHandler.buyCompany( data );
+			if( result ) res.status( CONSTANTS.SERVER_OK_HTTP_CODE ).json( result );
+		} catch( error ) {
+			throw new ApplicationError( error, CONSTANTS.SERVER_ERROR_HTTP_CODE );
 		};
 	};
 

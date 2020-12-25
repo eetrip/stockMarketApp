@@ -47,7 +47,9 @@ class Server{
         const host = process.env.HOST || `localhost`;      
 
         this.http.listen(port, host, () => {
-            console.log(`Listening on http://${host}:${port}`);
+            console.log(`
+                Listening on http://${host}:${port}
+            `);
         });
     }
 
