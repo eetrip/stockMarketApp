@@ -1,11 +1,12 @@
 import { ApplicationError } from "../utils/error";
 import { generateToken, decodeToken } from "../utils/token";
-const queryHandler = require('./../handlers/query-handler');
-const CONSTANTS = require('./../config/constants');
-const passwordHash = require('./../utils/password-hash');
+const baseModel = require('../models/baseModel');
+const CONSTANTS = require('../config/constants');
+const passwordHash = require('../utils/password-hash');
 
 'use strict';
-class RouteHandler{
+
+class BaseController{
 
 	async userNameCheckHandler(request, response){
 		const username = (request.body.username).toLowerCase();
@@ -16,7 +17,7 @@ class RouteHandler{
 			});
 		} else {
 			try {
-				const count = await queryHandler.userNameCheck( username );
+				const count = await baseModel.userNameCheck( username );
 				if (count && count.length > 0) {
 					response.status(200).json({
 						error : true,
@@ -54,7 +55,7 @@ class RouteHandler{
 			});
 		} else {
 			try {
-				const result = await queryHandler.getUserByName(data.username);
+				const result = await baseModel.getUserByName(data.username);
 				if( result ===  null || result === undefined ) {
 					response.status(CONSTANTS.SERVER_NOT_FOUND_HTTP_CODE).json({
 						error : true,
@@ -64,7 +65,7 @@ class RouteHandler{
 					if( passwordHash.compareHash(data.password, result.password)) {
 						const token = await generateToken(result._id);
 						result.token = token;
-						await queryHandler.makeUserOnline(result._id);
+						await baseModel.makeUserOnline(result._id);
 						response.status(CONSTANTS.SERVER_OK_HTTP_CODE).json({
 							error : false,
 							userId : result._id,
@@ -110,7 +111,7 @@ class RouteHandler{
 				data.online = 'Y' ;
 				data.socketId = '' ;
 				data.password = passwordHash.createHash(data.password);
-				const result = await queryHandler.registerUser(data);
+				const result = await baseModel.registerUser(data);
 				if (result === null || result === undefined) {
 					response.status(CONSTANTS.SERVER_OK_HTTP_CODE).json({
 						error : false,
@@ -144,7 +145,7 @@ class RouteHandler{
 			});
 		} else {
 			try {
-				const result = await queryHandler.userSessionCheck({ userId : userId });
+				const result = await baseModel.userSessionCheck({ userId : userId });
 				response.status(CONSTANTS.SERVER_OK_HTTP_CODE).json({
 					error : false,
 					username : result.username,
@@ -169,7 +170,7 @@ class RouteHandler{
 			});
 		}else{
 			try {
-				const messagesResponse = await queryHandler.getMessages({
+				const messagesResponse = await baseModel.getMessages({
 					userId:userId,
 					toUserId: toUserId
 				});
@@ -189,7 +190,7 @@ class RouteHandler{
 	async createCompany( req, res ) {
 		try {
 			const data = req.body;
-			const result = await queryHandler.createCompany( data );
+			const result = await baseModel.createCompany( data );
 			res.status(200).json( result );
 		} catch ( error ) {
 			console.log( error );
@@ -200,7 +201,7 @@ class RouteHandler{
 	async listCompanies( req, res ) {
 		try {
 			let userId = res.locals.authData.id;
-			const result = await queryHandler.listCompanies();
+			const result = await baseModel.listCompanies();
 			if( result ) res.status( 200 ).json( result );
 		} catch( error ) {
 			console.log( error );
@@ -211,7 +212,7 @@ class RouteHandler{
 		try {
 			const data = req.body;
 			data.userId = res.locals.authData.id;
-			const result = await queryHandler.buyCompany( data );
+			const result = await baseModel.buyCompany( data );
 			if( result ) res.status( CONSTANTS.SERVER_OK_HTTP_CODE ).json( result );
 		} catch( error ) {
 			throw new ApplicationError( error, CONSTANTS.SERVER_ERROR_HTTP_CODE );
@@ -227,4 +228,4 @@ class RouteHandler{
 	}
 }
 
-module.exports = new RouteHandler();
+module.exports = new BaseController();

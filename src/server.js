@@ -1,16 +1,11 @@
-/*
-* Real time private chatting app using Angular 2, Nodejs, mongodb and Socket.io
-* @author Shashank Tiwari
-*/
-
 'use strict';
 
 const express = require("express");
 const http = require('http');
 const socketio = require('socket.io');
 
-const socketEvents = require('./web/socket'); 
-const routes = require('./web/routes');
+const socketEvents = require('./routes/socket'); 
+const routes = require('./routes/routes');
 const cron = require('./utils/cron');
 const appConfig = require('./config/app-config'); 
 

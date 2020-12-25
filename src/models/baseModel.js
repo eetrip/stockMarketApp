@@ -7,10 +7,10 @@ const userModel = require('../db/users/user.schema');
 const { ApplicationError } = require('../utils/error');
 const CONSTANTS = require("../config/constants");
 
-class QueryHandler{
+class BaseModel{
 
 	constructor(){
-		this.Mongodb = require("./../config/db");
+		this.Mongodb = require("../config/db");
 	}
 
 	async userNameCheck( username ){
@@ -356,4 +356,4 @@ class QueryHandler{
   };
 };
 
-module.exports = new QueryHandler();
+module.exports = new BaseModel();

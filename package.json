@@ -2,16 +2,16 @@
   "name": "rest-api",
   "version": "0.0.1",
   "description": "This Rest API for MY Angular2 Projects.",
-  "main": "server.js",
+  "main": "src/server.js",
   "scripts": {
-    "dev-server": "NODE_ENV=local PORT=3000 nodemon --exec \"babel-node --inspect server.js\"",
+    "dev-server": "NODE_ENV=local PORT=3000 nodemon --exec \"babel-node --inspect src/server.js\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "rest",
     "api"
   ],
-  "author": "Shashank Tiwari",
+  "author": "Eeshan",
   "license": "MIT",
   "dependencies": {
     "babel-cli": "^6.26.0",

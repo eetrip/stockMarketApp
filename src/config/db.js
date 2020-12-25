@@ -1,8 +1,3 @@
-	/*
-* Real time private chatting app using Angular 2, Nodejs, mongodb and Socket.io
-* @author Shashank Tiwari
-*/
-
 "use strict";
 /*requiring mongodb node modules */
 const mongodb = require('mongodb');
