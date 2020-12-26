@@ -148,27 +148,22 @@ class BaseModel{
 		});
 	}
 
-	addSocketId({userId, socketId}){
-		const data = {
-			id : userId,
-			value : {
-				$set :{
-					socketId : socketId,
-					online : 'Y'
-				}
-			}
-		};
+	addSocketId( userId, socketId ) {
 		return new Promise( async (resolve, reject) => {
 			try {
 				await this.Mongodb.onConnect();
-				userModel.findByIdAndUpdate( { _id : data.id }, data.value ,(err, result) => {
-					// DB.close();
-					if( err ){
-						reject(err);
+				userModel.findByIdAndUpdate (
+					{ _id : userId },
+					{ socketId: socketId, online: "Y" },
+					( err, result ) => {
+						// DB.close();
+						if( err ){
+							reject(err);
+						}
+						resolve(result);
 					}
-					resolve(result);
-				});
-			} catch (error) {
+				);
+			} catch( error ) {
 				reject(error)
 			}
 		});
@@ -205,6 +200,56 @@ class BaseModel{
 	};
 
 
+	async listUserCompanies( userId ) {
+		try {
+			JSON.stringify( userId );
+			await this.Mongodb.onConnect();
+			const userCompanies = await userCompanyModel.find(
+				{ userId: userId },
+				( error, document ) => {
+					if( error ) {
+						return;
+					};
+				}
+			);
+			const companyIds = userCompanies.map( companyId => {
+				return companyId.companyId;
+			});
+			const companies = await companyModel.find(
+				{ _id: { $in: companyIds } }
+			);
+			if( companies && companies.length > 0 ) return companies;
+		} catch( error ) {
+			throw new ApplicationError( error, CONSTANTS.SERVER_ERROR_MESSAGE );
+		};
+	};
+
+
+	async listOtherCompanies( userId ) {
+		try {
+			JSON.stringify( userId );
+			await this.Mongodb.onConnect();
+			const userCompanies = await userCompanyModel.find(
+				{ userId: userId },
+				( error, document ) => {
+					if( error ) {
+						return;
+					};
+				}
+			);
+			const companyIds = userCompanies.map( companyId => {
+				return companyId.companyId;
+			});
+			const companies = await companyModel.find(
+				{ _id: { $nin: companyIds } }
+			);
+			if( companies && companies.length > 0 ) return companies;
+		} catch( error ) {
+			throw new ApplicationError( error, CONSTANTS.SERVER_ERROR_MESSAGE );
+		};
+	};
+
+
 	async buyCompany( data ) {
 		return new Promise( async( resolve, reject ) => {
 			try {
@@ -224,7 +269,7 @@ class BaseModel{
 	};
 
 
-	getChatList(userId){
+	getChatList( userId ){
 		return new Promise( async (resolve, reject) => {
 			try {
 				const [DB, ObjectID] = await this.Mongodb.onConnect();

@@ -10,7 +10,13 @@ let CompanySchema = new Schema(
         highestPrice: {
             type: Number
         },
+        shares: {
+            type: Number
+        },
         currentPrice: {
+            type: Number
+        },
+        totalValue: {
             type: Number
         },
         status: {

@@ -19,10 +19,10 @@ let UserSchema = new Schema(
         password: {
             type: String
         },
-        socketId: {
+        online: {
             type: String
         },
-        online: {
+        socketId: {
             type: String
         },
         status: {

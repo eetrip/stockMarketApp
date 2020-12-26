@@ -1,0 +1,265 @@
+{
+	"info": {
+		"_postman_id": "fc8a5e0e-9ac2-488f-a09b-579ef458c87e",
+		"name": "stackApp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "signUp",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"name\",\n    \"firstName\": \"user1\",\n    \"lastName\": \"one\",\n    \"email\": \"one@one.com\",\n    \"password\": \"123456\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/register",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"name\",\n    \"password\": \"123456\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/login",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "registerCompany",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"companyName\": \"user1\",\n    \"highestPrice\": \"234\",\n    \"currentPrice\": \"260\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/registerCompany",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"registerCompany"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "listCompanies",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/listCompanies",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"listCompanies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "userNameCheck",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"new\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/usernameAvailable",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"usernameAvailable"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "buyCompany",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZTU3Yjg3YjZlOGMyNDgwMmI1YWQwZSIsImlhdCI6MTYwODg5NDMyMSwiZXhwIjoxNjA5NDk5MTIxfQ.ieUwD52Sq0rXfRgLshxyRFXPBoWvKvWD5Jv5djI2Lq4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"companyId\": \"5fe5c5e0c09db88f59e626b8\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/buyCompany",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"buyCompany"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "listUserCompanies",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZTU3Yjg3YjZlOGMyNDgwMmI1YWQwZSIsImlhdCI6MTYwODkwMzIwMSwiZXhwIjoxNjA5NTA4MDAxfQ.wYTj0Tqm_TQtBEfof5YEJSFZ_-0YPoT7kjcqAMZ4XFY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/listUserCompanies",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"listUserCompanies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "listOtherCompanies",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZTU3Yjg3YjZlOGMyNDgwMmI1YWQwZSIsImlhdCI6MTYwODkwMzIwMSwiZXhwIjoxNjA5NTA4MDAxfQ.wYTj0Tqm_TQtBEfof5YEJSFZ_-0YPoT7kjcqAMZ4XFY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/listOtherCompanies",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"listOtherCompanies"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

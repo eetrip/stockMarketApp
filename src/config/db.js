@@ -21,7 +21,11 @@ class Db{
 	onConnect(){
 		const mongoURL = process.env.DB_URL;
 		return new Promise( (resolve, reject) => {
-			mongoose.connect(mongoURL, { useNewUrlParser: true }, (err, db) => {
+			mongoose.connect(mongoURL, {
+				useNewUrlParser: true,
+				useCreateIndex: true,
+				useUnifiedTopology: true
+			}, (err, db) => {
 				if (err) {
 					reject(err);
 				} else {

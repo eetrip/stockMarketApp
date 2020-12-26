@@ -1,4 +1,5 @@
 import { ApplicationError } from "../utils/error";
+import route from "../routes/route";
 import { generateToken, decodeToken } from "../utils/token";
 const baseModel = require('../models/baseModel');
 const CONSTANTS = require('../config/constants');
@@ -6,9 +7,7 @@ const passwordHash = require('../utils/password-hash');
 
 'use strict';
 
-class BaseController{
-
-	async userNameCheckHandler(request, response){
+export const userNameCheckHandler = route( async( request, response ) => {
 		const username = (request.body.username).toLowerCase();
 		if (username === "") {
 			response.status(CONSTANTS.SERVER_ERROR_HTTP_CODE).json({
@@ -36,9 +35,9 @@ class BaseController{
 				});
 			}
 		}
-	}
+	});
 
-	async loginRouteHandler(request, response){
+export const loginRouteHandler = route( async( request, response ) => {
 		const data = {
 			username : (request.body.username).toLowerCase(),
 			password : request.body.password
@@ -86,9 +85,9 @@ class BaseController{
 				});
 			}
 		}
-	}
+	});
 
-	async registerRouteHandler(request, response) {
+export const registerRouteHandler = route( async( request, response ) => {
 		const data = {
 			username: request.body.username,
 			firstName : request.body.firstName,
@@ -134,9 +133,9 @@ class BaseController{
 				});
 			}
 		}
-	}
+	});
 
-	async userSessionCheckRouteHandler(request, response){
+export const userSessionCheckRouteHandler = route( async( request, response ) => {
 		let userId = request.body.userId;
 		if (userId === '') {
 			response.status(CONSTANTS.SERVER_ERROR_HTTP_CODE).json({
@@ -158,9 +157,9 @@ class BaseController{
 				});
 			}
 		}
-	}
+	});
 
-	async getMessagesRouteHandler(request, response){
+export const getMessagesRouteHandler = route( async( request, response ) => {
 		const userId = request.body.userId;
 		const toUserId = request.body.toUserId;
 		if (userId == '') {
@@ -185,30 +184,53 @@ class BaseController{
 				});
 			}
 		}
+	});
+
+
+export const createCompany = route( async( req, res ) => {
+	try {
+		const data = req.body;
+		const result = await baseModel.createCompany( data );
+		res.status(200).json( result );
+	} catch ( error ) {
+		throw new ApplicationError( error, CONSTANTS.SERVER_ERROR_HTTP_CODE );
 	};
+});
 
-	async createCompany( req, res ) {
-		try {
-			const data = req.body;
-			const result = await baseModel.createCompany( data );
-			res.status(200).json( result );
-		} catch ( error ) {
-			console.log( error );
-		};
+
+export const listCompanies = route( async( req, res ) => {
+	try {
+		const result = await baseModel.listCompanies();
+		if( result ) res.status( 200 ).json( result );
+	} catch( error ) {
+		throw new ApplicationError( error, CONSTANTS.SERVER_ERROR_HTTP_CODE );
 	};
+});
 
 
-	async listCompanies( req, res ) {
-		try {
-			let userId = res.locals.authData.id;
-			const result = await baseModel.listCompanies();
-			if( result ) res.status( 200 ).json( result );
-		} catch( error ) {
-			console.log( error );
-		};
+export const listUserCompanies = route( async( req, res ) => {
+	try {
+		let userId = res.locals.authData.id;
+		const result = await baseModel.listUserCompanies( userId );
+		if( result ) res.status( CONSTANTS.SERVER_OK_HTTP_CODE ).json( result );
+	} catch( error ) {
+		throw new ApplicationError( error, CONSTANTS.SERVER_ERROR_HTTP_CODE );
 	};
+});
 
-	async buyCompany( req, res ) {
+
+export const listOtherCompanies = route( async( req, res ) => {
+	try {
+		let userId = res.locals.authData.id;
+		const result = await baseModel.listOtherCompanies( userId );
+		if( result ) res.status( CONSTANTS.SERVER_OK_HTTP_CODE ).json( result );
+	} catch( error ) {
+		throw new ApplicationError( error, CONSTANTS.SERVER_ERROR_HTTP_CODE );
+	};
+});
+
+
+export const buyCompany = route( async( req, res ) => {
 		try {
 			const data = req.body;
 			data.userId = res.locals.authData.id;
@@ -217,15 +239,12 @@ class BaseController{
 		} catch( error ) {
 			throw new ApplicationError( error, CONSTANTS.SERVER_ERROR_HTTP_CODE );
 		};
-	};
+	});
 
 
-	routeNotFoundHandler(request, response){
+export const routeNotFoundHandler = route( async( request, response ) => {
 		res.status(CONSTANTS.SERVER_NOT_FOUND_HTTP_CODE).json({
 			error : true,
 			message : CONSTANTS.ROUTE_NOT_FOUND
 		});
-	}
-}
-
-module.exports = new BaseController();
+	});
