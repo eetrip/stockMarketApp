@@ -42,7 +42,6 @@ class Routes{
 		this.app.post( '/buyCompany', decodeBearerToken, buyCompany );
 
 		// miscellaneous routes
-		this.app.post('/getMessages', decodeBearerToken, getMessagesRouteHandler);
 		this.app.get('*', routeNotFoundHandler);
 	}
 

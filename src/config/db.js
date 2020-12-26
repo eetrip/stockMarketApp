@@ -19,7 +19,7 @@ class Db{
 	}
 
 	onConnect(){
-		const mongoURL = process.env.DB_URL;
+		const mongoURL = process.env.DEV_DB_URL;
 		return new Promise( (resolve, reject) => {
 			mongoose.connect(mongoURL, {
 				useNewUrlParser: true,
